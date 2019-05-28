@@ -1,6 +1,6 @@
 {
   "name": "use-state-epic",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Use RxJS Epics as state management for your React Components",
   "main": "dist/use-state-epic.cjs.js",
   "module": "dist/use-state-epic.esm.js",
