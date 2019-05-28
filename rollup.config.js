@@ -47,6 +47,6 @@ export default [
       }),
       commonjs(),
     ],
-    external: ['react', 'rxjs'],
+    external: ['react', 'rxjs', 'rxjs/operators'],
   },
 ];
