@@ -7,6 +7,7 @@ import React, {
   useContext,
   useLayoutEffect,
 } from 'react';
+import PropTypes from 'prop-types';
 import { Subject, BehaviorSubject } from 'rxjs';
 import { distinctUntilChanged, tap } from 'rxjs/operators';
 
@@ -19,6 +20,10 @@ export const EpicDependencyProvider = ({ value = DEFAULT_DEPS, children }) => {
       {children}
     </EpicDependencyContext.Provider>
   );
+};
+EpicDependencyProvider.propTypes = {
+  children: PropTypes.node,
+  value: PropTypes.object,
 };
 
 export const useStateEpic = (
