@@ -57,5 +57,8 @@ typings/
 # dotenv environment variables file
 .env
 
+# editor workspace files
+*.code-workspace
+
 # My Project ignores
 dist
