@@ -1,10 +1,10 @@
 {
-  "name": "use-state-epic",
+  "name": "use-epic",
   "version": "0.0.2",
   "description": "Use RxJS Epics as state management for your React Components",
-  "main": "dist/use-state-epic.cjs.js",
-  "module": "dist/use-state-epic.esm.js",
-  "browser": "dist/use-state-epic.umd.js",
+  "main": "dist/use-epic.cjs.js",
+  "module": "dist/use-epic.esm.js",
+  "browser": "dist/use-epic.umd.js",
   "scripts": {
     "prepublishOnly": "npm run build",
     "start": "run-p build:watch test:watch",
@@ -16,15 +16,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/BigAB/use-state-epic.git"
+    "url": "git+https://github.com/BigAB/use-epic.git"
   },
   "keywords": [],
   "author": "BigAB <bigab@live.ca> (http://bigab.net)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/BigAB/use-state-epic/issues"
+    "url": "https://github.com/BigAB/use-epic/issues"
   },
-  "homepage": "https://github.com/BigAB/use-state-epic#readme",
+  "homepage": "https://github.com/BigAB/use-epic#readme",
   "peerDependencies": {
     "react": "^16.8.6",
     "rxjs": "^6.5.2"
@@ -42,13 +42,12 @@
     "npm-run-all": "^4.1.5",
     "prettier": "^1.17.1",
     "pretty-quick": "^1.11.0",
-    "prop-types": "^15.7.2",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
-    "rollup": "^1.12.4",
+    "rollup": "^1.13.1",
     "rollup-plugin-babel": "^4.3.2",
     "rollup-plugin-commonjs": "^10.0.0",
-    "rollup-plugin-node-resolve": "^5.0.0",
+    "rollup-plugin-node-resolve": "^5.0.1",
     "rxjs": "^6.5.2"
   },
   "files": [

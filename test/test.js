@@ -1,5 +1,5 @@
-const useStateEpic = require('..');
+const useEpic = require('..');
 
-test('useStateEpic should be the default export', () => {
-  expect(useStateEpic).toBeDefined();
+test('useEpic should be the default export', () => {
+  expect(useEpic).toBeDefined();
 });

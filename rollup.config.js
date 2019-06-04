@@ -26,7 +26,7 @@ export default [
   {
     input: 'src/main.js',
     output: {
-      name: 'useStateEpic',
+      name: 'useEpic',
       file: pkg.browser,
       format: 'umd',
       globals: {

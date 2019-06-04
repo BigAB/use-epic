@@ -7,7 +7,6 @@ import React, {
   useContext,
   useLayoutEffect,
 } from 'react';
-import PropTypes from 'prop-types';
 import { Subject, BehaviorSubject } from 'rxjs';
 import { distinctUntilChanged, tap } from 'rxjs/operators';
 
@@ -21,17 +20,8 @@ export const EpicDependencyProvider = ({ value = DEFAULT_DEPS, children }) => {
     </EpicDependencyContext.Provider>
   );
 };
-EpicDependencyProvider.propTypes = {
-  children: PropTypes.node,
-  value: PropTypes.object,
-};
 
-export const useStateEpic = (
-  stateEpic,
-  inputs = [],
-  dependencies = DEFAULT_DEPS
-) => {
-  // console.count('render');
+export const useEpic = (epic, inputs = [], dependencies = DEFAULT_DEPS) => {
   // dependencies
   const providedDeps = useContext(EpicDependencyContext);
   const depsRef = useRef(dependencies);
@@ -57,7 +47,7 @@ export const useStateEpic = (
   const dispatch = useCallback(action => actions$.next(action), [actions$]);
 
   // new state
-  const createNewStateObservable = useCallback(stateEpic, inputs);
+  const createNewStateObservable = useCallback(epic, inputs);
   const newState$ = useMemo(
     () => createNewStateObservable(actions$, state$, deps),
     [createNewStateObservable, actions$, state$, deps]
@@ -74,4 +64,4 @@ export const useStateEpic = (
   return [state, dispatch];
 };
 
-export default useStateEpic;
+export default useEpic;
