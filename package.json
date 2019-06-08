@@ -2,17 +2,16 @@
   "name": "use-epic",
   "version": "0.0.3",
   "description": "Use RxJS Epics as state management for your React Components",
-  "main": "dist/use-epic.cjs.js",
-  "module": "dist/use-epic.esm.js",
-  "browser": "dist/use-epic.umd.js",
+  "main": "src/index",
   "scripts": {
-    "prepublishOnly": "npm run build",
+    "lint": "eslint src",
     "start": "run-p build:watch test:watch",
-    "build": "rollup -c",
-    "build:watch": "rollup -c -w",
-    "test": "jest test/test.js --coverage",
-    "test:watch": "jest test/test.js --watch",
-    "pretest": "npm run build"
+    "test": "jest test/*test.js --coverage",
+    "test:watch": "jest test/*test.js --watch",
+    "pretest": "npm run build",
+    "build": "pack build",
+    "publish": "pack publish",
+    "prepublishOnly": "npm run lint && npm run test && npm run build"
   },
   "repository": {
     "type": "git",
@@ -33,6 +32,10 @@
     "@babel/core": "^7.4.5",
     "@babel/preset-env": "^7.4.5",
     "@babel/preset-react": "^7.0.0",
+    "@pika/pack": "^0.3.7",
+    "@pika/plugin-build-umd": "^0.4.0",
+    "@pika/plugin-build-web": "^0.4.0",
+    "@pika/plugin-standard-pkg": "^0.4.0",
     "eslint": "^5.16.0",
     "eslint-config-prettier": "^4.3.0",
     "eslint-plugin-prettier": "^3.1.0",
@@ -44,10 +47,6 @@
     "pretty-quick": "^1.11.0",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
-    "rollup": "^1.14.3",
-    "rollup-plugin-babel": "^4.3.2",
-    "rollup-plugin-commonjs": "^10.0.0",
-    "rollup-plugin-node-resolve": "^5.0.1",
     "rxjs": "^6.5.2"
   },
   "files": [
@@ -62,5 +61,39 @@
     "trailingComma": "es5",
     "jsxSingleQuote": true,
     "singleQuote": true
+  },
+  "babel": {
+    "presets": [
+      [
+        "@babel/preset-env",
+        {
+          "targets": {
+            "chrome": 76
+          }
+        }
+      ],
+      "@babel/preset-react"
+    ]
+  },
+  "@pika/pack": {
+    "pipeline": [
+      [
+        "@pika/plugin-standard-pkg",
+        {
+          "exclude": [
+            "test/**/*"
+          ]
+        }
+      ],
+      [
+        "@pika/plugin-build-web"
+      ],
+      [
+        "@pika/plugin-build-umd",
+        {
+          "name": "useEpic"
+        }
+      ]
+    ]
   }
 }

@@ -61,4 +61,4 @@ typings/
 *.code-workspace
 
 # My Project ignores
-dist
+/pkg
