@@ -12,7 +12,10 @@ export default [
       { file: pkg.main, format: 'cjs', exports: 'named' },
     ],
     plugins: [
-      resolve(),
+      resolve({
+        mainFields: ['module', 'main', 'browser'],
+        dedupe: ['react', 'rxjs'],
+      }),
       babel({
         exclude: 'node_modules/**',
         presets: [
@@ -37,7 +40,10 @@ export default [
       exports: 'named',
     },
     plugins: [
-      resolve(),
+      resolve({
+        mainFields: ['module', 'main', 'browser'],
+        dedupe: ['react', 'rxjs'],
+      }),
       babel({
         exclude: 'node_modules/**',
         presets: [
