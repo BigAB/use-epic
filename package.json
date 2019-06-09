@@ -1,6 +1,6 @@
 {
   "name": "use-epic",
-  "version": "0.0.5",
+  "version": "0.0.4",
   "description": "Use RxJS Epics as state management for your React Components",
   "main": "src/index",
   "scripts": {
