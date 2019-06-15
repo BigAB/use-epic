@@ -9,6 +9,7 @@ import React, {
 } from 'react';
 import { Subject, BehaviorSubject } from 'rxjs';
 import { distinctUntilChanged, tap } from 'rxjs/operators';
+export * from './operators';
 
 const DEFAULT_DEPS = {};
 
