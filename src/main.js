@@ -8,7 +8,7 @@ import React, {
   useLayoutEffect,
 } from 'react';
 import { Subject, BehaviorSubject } from 'rxjs';
-import { distinctUntilChanged, tap } from 'rxjs/operators';
+import { distinctUntilChanged, catchError, tap } from 'rxjs/operators';
 export * from './operators';
 
 const DEFAULT_DEPS = {};
@@ -32,14 +32,18 @@ export const useEpic = (epic, inputs = [], dependencies = DEFAULT_DEPS) => {
 
   // state
   const [state, setState] = useState(deps.initialState);
-  const state$ref = useRef(new BehaviorSubject(state));
   const state$ = useMemo(
     () =>
-      state$ref.current.pipe(
-        distinctUntilChanged(),
-        tap(s => setState(s))
+      new BehaviorSubject(state).pipe(
+        tap(state => {
+          setState(state);
+        }),
+        catchError(err => {
+          // What should we do on error?
+          throw err;
+        })
       ),
-    [state$ref, setState]
+    []
   );
 
   // actions
@@ -49,18 +53,28 @@ export const useEpic = (epic, inputs = [], dependencies = DEFAULT_DEPS) => {
 
   // new state
   const createNewStateObservable = useCallback(epic, inputs);
-  const newState$ = useMemo(
-    () => createNewStateObservable(actions$, state$, deps),
-    [createNewStateObservable, actions$, state$, deps]
-  );
+  const newState$ = useMemo(() => {
+    const newState$ = createNewStateObservable(
+      actions$,
+      state$.asObservable(),
+      deps
+    );
+    return (
+      newState$ && newState$.pipe(distinctUntilChanged()).subscribe(state$)
+    );
+  }, [createNewStateObservable, actions$, state$, deps]);
 
   useLayoutEffect(() => {
-    const subscription = newState$.subscribe(state$);
+    if (!newState$) {
+      // TODO: check for obsevable type and give warnings if not
+      return;
+    }
+    const subscription = state$.subscribe();
 
     return () => {
       subscription.unsubscribe();
     };
-  }, [state$, newState$]);
+  }, [newState$, setState]);
 
   return [state, dispatch];
 };
