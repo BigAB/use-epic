@@ -34,7 +34,7 @@ export const useEpic = (epic, inputs = [], dependencies = DEFAULT_DEPS) => {
   const [state, setState] = useState(deps.initialState);
   const state$ = useMemo(
     () =>
-      new BehaviorSubject(state).pipe(
+      new BehaviorSubject(deps.initialState).pipe(
         tap(state => {
           setState(state);
         }),
@@ -43,8 +43,13 @@ export const useEpic = (epic, inputs = [], dependencies = DEFAULT_DEPS) => {
           throw err;
         })
       ),
-    []
+    [deps]
   );
+  // subscribe to state$ immediatly, but unsubscribe on unmount
+  useLayoutEffect(() => {
+    const sub = state$.subscribe();
+    return () => sub.unsubscribe();
+  }, [state$]);
 
   // actions
   const actions$ref = useRef(new Subject());
@@ -53,28 +58,24 @@ export const useEpic = (epic, inputs = [], dependencies = DEFAULT_DEPS) => {
 
   // new state
   const createNewStateObservable = useCallback(epic, inputs);
-  const newState$ = useMemo(() => {
-    const newState$ = createNewStateObservable(
-      actions$,
-      state$.asObservable(),
-      deps
-    );
-    return (
-      newState$ && newState$.pipe(distinctUntilChanged()).subscribe(state$)
-    );
-  }, [createNewStateObservable, actions$, state$, deps]);
+  const newState$ = useMemo(
+    () => createNewStateObservable(actions$, state$.asObservable(), deps),
+    [createNewStateObservable, actions$, state$, deps]
+  );
 
   useLayoutEffect(() => {
     if (!newState$) {
       // TODO: check for obsevable type and give warnings if not
       return;
     }
-    const subscription = state$.subscribe();
+    const subscription = newState$
+      .pipe(distinctUntilChanged())
+      .subscribe(state$);
 
     return () => {
       subscription.unsubscribe();
     };
-  }, [newState$, setState]);
+  }, [newState$, setState, state$]);
 
   return [state, dispatch];
 };
