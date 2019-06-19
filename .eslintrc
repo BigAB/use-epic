@@ -3,7 +3,7 @@
     "sourceType": "module",
     "ecmaVersion": 2019
   },
-  "plugins": ["react", "prettier"],
+  "plugins": ["react", "prettier", "react-hooks"],
   "extends": [
     "eslint:recommended",
     "plugin:react/recommended",
@@ -17,6 +17,8 @@
     "jest": true
   },
   "rules": {
-    "react/prop-types": 0
+    "react/prop-types": 0,
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn"
   }
 }
