@@ -9,7 +9,7 @@ describe('useEpic()', () => {
     expect(useEpicModule.default).toBe(useEpic);
   });
 
-  test('it should subscribe to the observable returned from the epic', async () => {
+  test('it should subscribe to the state observable returned from the epic', async () => {
     const subject = new BehaviorSubject({ foo: 'pre' });
     const { result } = renderHook(() => useEpic(() => subject));
     let [state] = result.current;

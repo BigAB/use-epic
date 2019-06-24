@@ -7,7 +7,7 @@ import React, {
   useContext,
   useLayoutEffect,
 } from 'react';
-import { Subject, BehaviorSubject } from 'rxjs';
+import { Subject, BehaviorSubject, EMPTY, isObservable } from 'rxjs';
 import { distinctUntilChanged, catchError, tap } from 'rxjs/operators';
 export * from './operators';
 
@@ -22,29 +22,43 @@ export const EpicDependencyProvider = ({ value = DEFAULT_DEPS, children }) => {
   );
 };
 
-export const useEpic = (epic, inputs = [], dependencies = DEFAULT_DEPS) => {
+export const useEpic = (
+  epic,
+  { props, deps: dependencies = DEFAULT_DEPS } = {}
+) => {
+  // props
+  const props$ref = useRef(props);
+  const props$ = useMemo(
+    () => new BehaviorSubject(props$ref.current).pipe(distinctUntilChanged()),
+    [props$ref]
+  );
+  props$.next(props);
+
   // dependencies
   const providedDeps = useContext(EpicDependencyContext);
   const depsRef = useRef(dependencies);
-  const deps = useMemo(() => ({ ...providedDeps, ...depsRef.current }), [
-    providedDeps,
-  ]);
+  const depsCheck = useMemo(
+    () => ({ ...providedDeps, ...depsRef.current, props$ }),
+    [providedDeps, props$]
+  );
+  // Only recreate deps if any shallow value changes
+  // eslint-disable-next-line
+  const deps = useMemo(() => depsCheck, Object.values(depsCheck));
 
   // state
-  const [state, setState] = useState(deps.initialState);
-  const state$ = useMemo(
-    () =>
-      new BehaviorSubject(deps.initialState).pipe(
-        tap(state => {
-          setState(state);
-        }),
-        catchError(err => {
-          // What should we do on error?
-          throw err;
-        })
-      ),
-    [deps]
-  );
+  const [state, setState] = useState();
+  const stateRef = useRef(state);
+  const state$ = useMemo(() => {
+    return new BehaviorSubject(stateRef.current).pipe(
+      tap(state => {
+        setState(state);
+      }),
+      catchError(err => {
+        // What should we do on error?
+        throw err;
+      })
+    );
+  }, [stateRef, setState]);
   // subscribe to state$ immediatly, but unsubscribe on unmount
   useLayoutEffect(() => {
     const sub = state$.subscribe();
@@ -57,25 +71,26 @@ export const useEpic = (epic, inputs = [], dependencies = DEFAULT_DEPS) => {
   const dispatch = useCallback(action => actions$.next(action), [actions$]);
 
   // new state
-  const createNewStateObservable = useCallback(epic, inputs);
-  const newState$ = useMemo(
-    () => createNewStateObservable(actions$, state$.asObservable(), deps),
-    [createNewStateObservable, actions$, state$, deps]
+  const epicRef = useRef(epic);
+  const newState$ = useMemo(() => {
+    const newState$ = epicRef.current(actions$, state$.asObservable(), deps);
+    if (newState$ && !isObservable(newState$)) {
+      if ('production' !== process.env.NODE_ENV) {
+        // eslint-disable-next-line no-console
+        console.warn(
+          'use-epic: Epic did not returned something that was not an RXJS observable'
+        );
+      }
+      return EMPTY;
+    }
+    return newState$ || EMPTY;
+  }, [epicRef, actions$, state$, deps]);
+  const subscription = useMemo(
+    () => newState$.pipe(distinctUntilChanged()).subscribe(state$),
+    [newState$, state$]
   );
 
-  useLayoutEffect(() => {
-    if (!newState$) {
-      // TODO: check for obsevable type and give warnings if not
-      return;
-    }
-    const subscription = newState$
-      .pipe(distinctUntilChanged())
-      .subscribe(state$);
-
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, [newState$, setState, state$]);
+  useLayoutEffect(() => () => subscription.unsubscribe(), [subscription]);
 
   return [state, dispatch];
 };
