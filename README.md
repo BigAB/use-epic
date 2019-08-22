@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/bigab/use-epic.svg?branch=master)](https://travis-ci.org/bigab/use-epic)
 [![MIT](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](https://github.com/bigab/use-epic/blob/master/LICENSE)
-[![npm version](https://badge.fury.io/js/use-epic.svg)](https://badge.fury.io/js/use-epic)
+[![npm version](https://badge.fury.io/js/use-epic.svg)](https://badge.fury.io/js/use-epic) [![Greenkeeper badge](https://badges.greenkeeper.io/BigAB/use-epic.svg)](https://greenkeeper.io/)
 
 Use RxJS Epics as state management for your React Components
 
