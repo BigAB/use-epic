@@ -1,12 +1,11 @@
-const { renderHook, act } = require('react-hooks-testing-library');
-const { BehaviorSubject, from } = require('rxjs');
-const { reduce, take } = require('rxjs/operators');
-const useEpicModule = require('..');
-const { useEpic } = useEpicModule;
+import { renderHook, act } from '@testing-library/react-hooks';
+import { BehaviorSubject, from } from 'rxjs';
+import { reduce, take } from 'rxjs/operators';
+import useEpicModule, { useEpic } from '../src/main';
 
 describe('useEpic()', () => {
   test('useEpic should be the default export', () => {
-    expect(useEpicModule.default).toBe(useEpic);
+    expect(useEpicModule).toBe(useEpic);
   });
 
   test('it should subscribe to the state observable returned from the epic', async () => {

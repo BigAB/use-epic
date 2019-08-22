@@ -12,6 +12,7 @@
     "build:watch": "rollup -c -w",
     "test": "jest test/test.js --coverage",
     "test:watch": "jest test/test.js --watch",
+    "test:debug": "node --inspect node_modules/.bin/jest --runInBand",
     "pretest": "npm run build"
   },
   "repository": {
@@ -38,6 +39,8 @@
     "@babel/core": "^7.5.5",
     "@babel/preset-env": "^7.5.5",
     "@babel/preset-react": "^7.0.0",
+    "@testing-library/react-hooks": "^2.0.1",
+    "babel-jest": "^24.9.0",
     "eslint": "^6.2.1",
     "eslint-config-prettier": "^6.1.0",
     "eslint-plugin-prettier": "^3.1.0",
@@ -50,7 +53,6 @@
     "pretty-quick": "^1.11.1",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
-    "react-hooks-testing-library": "^0.6.0",
     "react-test-renderer": "^16.9.0",
     "rollup": "^1.20.0",
     "rollup-plugin-babel": "^4.3.3",
@@ -70,5 +72,26 @@
     "trailingComma": "es5",
     "jsxSingleQuote": true,
     "singleQuote": true
+  },
+  "jest": {
+    "collectCoverageFrom": [
+      "src/*.js",
+      "!src/index.js"
+    ]
+  },
+  "browserslist": [
+    "last 2 versions and >5%"
+  ],
+  "babel": {
+    "presets": [
+      [
+        "@babel/preset-env",
+        {
+          "targets": {
+            "node": "current"
+          }
+        }
+      ]
+    ]
   }
 }

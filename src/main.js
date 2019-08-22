@@ -15,10 +15,12 @@ const DEFAULT_DEPS = {};
 
 const EpicDependencyContext = createContext(DEFAULT_DEPS);
 export const EpicDependencyProvider = ({ value = DEFAULT_DEPS, children }) => {
-  return (
-    <EpicDependencyContext.Provider value={value}>
-      {children}
-    </EpicDependencyContext.Provider>
+  return React.createElement(
+    EpicDependencyContext.Provider,
+    {
+      value: value,
+    },
+    children
   );
 };
 
