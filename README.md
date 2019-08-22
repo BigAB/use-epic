@@ -36,7 +36,7 @@ yarn add use-epic rxjs react
 
 ## :seedling: Contribute
 
-Let people know how they can contribute into your project. A [contributing guideline](./CONTRIBUTING.md) will be a big plus.
+Think you'd like to contribute to this project? Check out our [contributing guideline](./CONTRIBUTING.md) and feel free to create issues and pull requests!
 
 ## License
 
