@@ -6,19 +6,32 @@
 
 Use RxJS Epics as state management for your React Components
 
-## :book: Contents
-
-- [Usage](#mag_right-usage)
-- [Installation](#hammer_and_pick-installation)
-- [Contribute](#seedling-Contribute)
-
-## :mag_right: Usage
+## :mag_right: Example
 
 ```js
-const ProductsComponent = props => {
-  const [products, dispatch] = useEpic((action$, state$, deps) => {});
+function productEpic(action$, state$, deps) {
+  const { productStore, cartObserver, props$ } = deps;
+  combineLatest(action$.pipe(ofType('addToCart')), state$)
+    .pipe(
+      map(([productId, products]) => products.find(p => p.id === productId))
+    )
+    .subscribe(cartObserver);
 
-  return <ProductsList />;
+  return props$.pipe(
+    map(props => props.category),
+    switchMap(category => productStore.productsByCategory(category)),
+    startWith([])
+  );
+}
+
+const ProductsComponent = props => {
+  const [products, dispatch] = useEpic(productEpic, { props });
+
+  // map dispatch to a component callback
+  const addToCart = productId =>
+    dispatch({ type: 'addToCart', payload: productId });
+
+  return <ProductsList products={products} addToCart={addToCart} />;
 };
 ```
 
@@ -33,6 +46,12 @@ npm install use-epic rxjs react
 ```sh
 yarn add use-epic rxjs react
 ```
+
+## :book: API
+
+### `useEpic()`
+
+TODO
 
 ## :seedling: Contribute
 
