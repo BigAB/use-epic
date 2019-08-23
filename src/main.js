@@ -1,98 +1,101 @@
-import React, {
+import {
   useRef,
   useState,
   useCallback,
   useMemo,
-  createContext,
   useContext,
-  useLayoutEffect,
+  useEffect,
 } from 'react';
 import { Subject, BehaviorSubject, EMPTY, isObservable } from 'rxjs';
 import { distinctUntilChanged, catchError, tap } from 'rxjs/operators';
+import { EpicDepsProvider, EpicDepsContext } from './provider';
+
 export * from './operators';
+export { EpicDepsProvider };
 
 const DEFAULT_DEPS = {};
-
-const EpicDependencyContext = createContext(DEFAULT_DEPS);
-export const EpicDependencyProvider = ({ value = DEFAULT_DEPS, children }) => {
-  return React.createElement(
-    EpicDependencyContext.Provider,
-    {
-      value: value,
-    },
-    children
-  );
-};
 
 export const useEpic = (
   epic,
   { props, deps: dependencies = DEFAULT_DEPS } = {}
 ) => {
   // props
-  const props$ref = useRef(props);
-  const props$ = useMemo(
-    () => new BehaviorSubject(props$ref.current).pipe(distinctUntilChanged()),
-    [props$ref]
-  );
+  const props$ref = useRef();
+  if (!props$ref.current) {
+    props$ref.current = new BehaviorSubject(props$ref.current).pipe(
+      distinctUntilChanged()
+    );
+  }
+  const props$ = props$ref.current;
   props$.next(props);
 
   // dependencies
-  const providedDeps = useContext(EpicDependencyContext);
-  const depsRef = useRef(dependencies);
+  const providedDeps = useContext(EpicDepsContext);
   const depsCheck = useMemo(
-    () => ({ ...providedDeps, ...depsRef.current, props$ }),
-    [providedDeps, props$]
+    () => ({ ...providedDeps, ...dependencies, props$ }),
+    [providedDeps, dependencies, props$]
   );
   // Only recreate deps if any shallow value changes
-  // eslint-disable-next-line
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const deps = useMemo(() => depsCheck, Object.values(depsCheck));
 
   // state
   const [state, setState] = useState();
-  const stateRef = useRef(state);
-  const state$ = useMemo(() => {
-    return new BehaviorSubject(stateRef.current).pipe(
+  const stateRef = useRef();
+  if (!stateRef.current) {
+    stateRef.current = new BehaviorSubject(stateRef.current).pipe(
       tap(state => {
         setState(state);
       }),
       catchError(err => {
-        // What should we do on error?
+        // TODO: What should we do on error?
         throw err;
       })
     );
-  }, [stateRef, setState]);
-  // subscribe to state$ immediatly, but unsubscribe on unmount
-  useLayoutEffect(() => {
+  }
+  const state$ = stateRef.current;
+  // subscribe to state$ immediately, but unsubscribe on unmount
+  useEffect(() => {
     const sub = state$.subscribe();
     return () => sub.unsubscribe();
   }, [state$]);
 
   // actions
-  const actions$ref = useRef(new Subject());
-  const actions$ = actions$ref.current;
+  const actionsRef = useRef();
+  if (!actionsRef.current) {
+    actionsRef.current = new Subject();
+  }
+  const actions$ = actionsRef.current;
   const dispatch = useCallback(action => actions$.next(action), [actions$]);
 
-  // new state
+  // epics are not recomputed, only the first value passed is used
   const epicRef = useRef(epic);
+
+  // new state observable is recomputed, every time deps change
   const newState$ = useMemo(() => {
-    const newState$ = epicRef.current(actions$, state$.asObservable(), deps);
+    const newState$ = epicRef.current(
+      actions$.asObservable(),
+      state$.asObservable(),
+      deps
+    );
     if (newState$ && !isObservable(newState$)) {
       if ('production' !== process.env.NODE_ENV) {
         // eslint-disable-next-line no-console
         console.warn(
-          'use-epic: Epic did not returned something that was not an RXJS observable'
+          'use-epic: Epic returned something that was not an RXJS observable'
         );
       }
       return EMPTY;
     }
     return newState$ || EMPTY;
-  }, [epicRef, actions$, state$, deps]);
-  const subscription = useMemo(
-    () => newState$.pipe(distinctUntilChanged()).subscribe(state$),
-    [newState$, state$]
-  );
+  }, [actions$, state$, deps]);
 
-  useLayoutEffect(() => () => subscription.unsubscribe(), [subscription]);
+  useEffect(() => {
+    const subscription = newState$
+      .pipe(distinctUntilChanged())
+      .subscribe(state$);
+    return () => subscription.unsubscribe();
+  }, [newState$, state$]);
 
   return [state, dispatch];
 };
