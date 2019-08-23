@@ -1,4 +1,4 @@
-# :rocket: use-epic
+# 🏰 use-epic
 
 [![Build Status](https://travis-ci.org/bigab/use-epic.svg?branch=master)](https://travis-ci.org/bigab/use-epic)
 [![MIT](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](https://github.com/bigab/use-epic/blob/master/LICENSE)
