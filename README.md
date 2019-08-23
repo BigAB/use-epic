@@ -10,7 +10,7 @@ Use RxJS Epics as state management for your React Components
 
 An **Epic** is a function which takes an Observable of actions (`action$`), an Observable of the current state (`state$`), and an object of dependencies (`deps`) and returns an Observable.
 
-The idea of the **Epic** comes out of the fantastic redux middleware [redux-observable](https://redux-observable.js.org/), but a _noteably difference_ is that, because redux-observable is redux middleware, the observable returned from the **Epic** emits new `actions` to be run through **reducers** to create new state, `useEpic()` skips the redux middleman and expects the
+The idea of the **Epic** comes out of the fantastic redux middleware [redux-observable](https://redux-observable.js.org/), but a _noteable difference_ is that, because redux-observable is redux middleware, the observable returned from the **Epic** emits new `actions` to be run through **reducers** to create new state, `useEpic()` skips the redux middleman and expects the
 **Epic** to return an observable of `state` updates.
 
 ```js
@@ -61,6 +61,14 @@ npm install use-epic rxjs react
 ```sh
 yarn add use-epic rxjs react
 ```
+
+## :card_file_box: Examples
+
+- [Simple Fetch Example] _\*coming soon\*_
+- [Snooze Timer] _\*coming soon\*_
+- [Beer Search] _\*coming soon\*_
+- [Pull to Refresh] _\*coming soon\*_
+- [Working with simple-store] _\*coming soon\*_
 
 ## :book: API
 
@@ -190,14 +198,6 @@ A React Provider component that supplies `deps` to any `epic` function used by t
 ```
 
 Any `props` passed to the `EpicDepsProvider` component will be merged onto the `deps` object passed to the `epic` function when calling `useEpic()`. Any change in `deps` will unsubscribe from the `newState$` observable, and recall the `epic` function, setting up new subscriptions, so try to change `deps` sparingly.
-
-## :card_file_box: Examples
-
-- [Simple Fetch Example] _\*coming soon\*_
-- [Snooze Timer] _\*coming soon\*_
-- [Beer Search] _\*coming soon\*_
-- [Pull to Refresh] _\*coming soon\*_
-- [Working with simple-store] _\*coming soon\*_
 
 ## Testing
 
