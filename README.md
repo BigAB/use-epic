@@ -64,7 +64,9 @@ yarn add use-epic rxjs react
 
 ## :card_file_box: Examples
 
-- [Simple Fetch Example] _\*coming soon\*_
+See [examples](./examples) locally with `npm run examples`
+
+- [Simple Fetch Example](https://codesandbox.io/s/use-epic-simple-ajax-list-load-wtl2r?fontsize=14) **([code examples](./examples/simple-fetch/PeopleList.js))**
 - [Snooze Timer] _\*coming soon\*_
 - [Beer Search] _\*coming soon\*_
 - [Pull to Refresh] _\*coming soon\*_
@@ -73,21 +75,21 @@ yarn add use-epic rxjs react
 ## :book: API
 
 - [`useEpic()`](#useepic)
-- [`epic`](#epic)
-- [`ofType`](#oftype)
+- [`epic()`](#epic)
+- [`ofType()`](#oftype)
 - [`<EpicDepsProvider>`](#epicdepsprovider)
 
 ### `useEpic()`
 
 A [React hook](https://reactjs.org/docs/hooks-intro.html) for using RxJS Observables for state management.
 
-#### `const [state, dispatch] = useEpic( Epic, options* );`
+#### `const [state, dispatch] = useEpic( epic, options* );`
 
-The `useEpic()` hook, accepts an `Epic` function, and an `options` object, and returns a tuple of `state` and a `dispatch` callback, similar to [`useReducer()`](https://reactjs.org/docs/hooks-reference.html#usereducer).
+The `useEpic()` hook, accepts an `epic` function, and an `options` object, and returns a tuple of `state` and a `dispatch` callback, similar to [`useReducer()`](https://reactjs.org/docs/hooks-reference.html#usereducer).
 
 **arguments**
 
-- `Epic` an [Epic](#Epic) function, [described below](#Epic) .
+- `epic` an [epic](#epic) function, [described below](#epic) .
 
   `function myEpic( action$, state$, deps ) { return newState$ }`
 
@@ -114,20 +116,24 @@ const CatDetails = props => {
 
 ### `epic()`
 
-An **`Epic`** is a function, that accepts an Observable of actions (`action$`), an Observable of the current state (`state$`), and an object of dependencies (`deps`) and returns an Observable of `stateUpdates$`.
+An **`epic`** is a function, that accepts an Observable of actions (`action$`), an Observable of the current state (`state$`), and an object of dependencies (`deps`) and returns an Observable of `stateUpdates$`.
 
-#### `function myEpic( action$*, state$*, deps* ) { return newState$* }`
+#### `function myEpic( action$, state$, deps ) { return newState$* }`
 
-All arguments are optional, and it may either return a new [RxJS Observable](https://rxjs.dev/api/index/class/Observable) or `undefined`. If an observable is returned, and values emitted from that observable are set as `state` and returned as the first tuple element from `useEpic()`.
+The **`epic`** will be called by `useEpic()`, passing the `action$`, `state$` and `deps` arguments, and it may either return a new [RxJS Observable](https://rxjs.dev/api/index/class/Observable) or `undefined`. If an observable is returned, and values emitted from that observable are set as `state`, the first element of the tuple returned from `useEpic()`.
 
-**arguments**
+```js
+const [state, dispatch] = useEpic(epic);
+```
 
-- `action$` <sup>_\*optional_</sup> An observable of dispatched `actions`. The `actions` emitted are anything passed to the `dispatch()` callback returned from `useEpic()`. They can be anything, but by convention are often either objects with a `type`, `payload` and sometimes `meta` properties (e.g. `{ type: 'activate', payload: user }`), or an array tuple with the `type` as the first element and the payload as the second (e.g. `['activate', user]`).
+**arguments passed when the epic is called**
 
-- `state$` <sup>_\*optional_</sup> An observable of the current `state`. It can be sometimes helpful to have a reference to the current state when composing streams, say if your `action.payload` is an `id` and you'd like to map that to a state entity before further processing it. Unless the observable returned from `useEpic()` has initial state, from using `startWith()` or a `BehaviorSubject`, this will emit `undefined` to start.  
+- `action$` An observable of dispatched `actions`. The `actions` emitted are anything passed to the `dispatch()` callback returned from `useEpic()`. They can be anything, but by convention are often either objects with a `type`, `payload` and sometimes `meta` properties (e.g. `{ type: 'activate', payload: user }`), or an array tuple with the `type` as the first element and the payload as the second (e.g. `['activate', user]`).
+
+- `state$` An observable of the current `state`. It can be sometimes helpful to have a reference to the current state when composing streams, say if your `action.payload` is an `id` and you'd like to map that to a state entity before further processing it. Unless the observable returned from `useEpic()` has initial state, from using `startWith()` or a `BehaviorSubject`, this will emit `undefined` to start.  
    ⚠️ Caution: When using `state$` it is possible to find yourself in an inifinte asynchrnous loop. Take care in how it is used along with the returned `newState$` observable.
 
-- `deps` <sup>_\*optional_</sup> an object of key/value pairs provided by the `options` of `useEpic` when it is called, or from the `<EpicDepsProvider>` component.
+- `deps` an object of key/value pairs provided by the `options` of `useEpic` when it is called, or from the `<EpicDepsProvider>` component.
 
   The `deps` argument can be very useful for provding a dependency injection point into your `Epic`s and therefore into your components. For example, if you provide an `ajax` dependecy in deps, you could provide the RxJS `ajax` function by default, but stub out `ajax` for tests or demo pages by wrapping your component in an `<EpicDepsProvider>` component.
 
@@ -164,8 +170,8 @@ All arguments are optional, and it may either return a new [RxJS Observable](htt
 
   The `deps` object can be good for providing "services", config, or any number of other useful features to help decouple your components from their dependecies.
 
-  `props$`  
-  There is a special property `deps.props$` which is always provided by `useEpic()` and is the methods in which components can pass props into the Epic. The `options.props` property of the `useEpic()` call is always emitted to the `deps.props$` observable.
+  `deps.props$`  
+  There is a special property `props$` which is always provided by `useEpic()` and is the methods in which components can pass props into the Epic. The `options.props` property of the `useEpic()` call is always emitted to the `deps.props$` observable.
 
 ### `ofType()`
 
