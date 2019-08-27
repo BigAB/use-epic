@@ -6,6 +6,7 @@ export const ofType = (...keys) =>
   pipe(
     filter(
       action =>
+        keys.includes(action) ||
         keys.includes(action.type) ||
         (Array.isArray(action) && keys.includes(action[0]))
     )

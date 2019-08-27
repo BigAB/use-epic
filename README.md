@@ -83,7 +83,7 @@ See [examples](./examples) locally with `npm run examples`
 
 A [React hook](https://reactjs.org/docs/hooks-intro.html) for using RxJS Observables for state management.
 
-#### `const [state, dispatch] = useEpic( epic, options* );`
+#### `const [state, dispatch] = useEpic( epic, options? );`
 
 The `useEpic()` hook, accepts an `epic` function, and an `options` object, and returns a tuple of `state` and a `dispatch` callback, similar to [`useReducer()`](https://reactjs.org/docs/hooks-reference.html#usereducer).
 
@@ -118,7 +118,7 @@ const CatDetails = props => {
 
 An **`epic`** is a function, that accepts an Observable of actions (`action$`), an Observable of the current state (`state$`), and an object of dependencies (`deps`) and returns an Observable of `stateUpdates$`.
 
-#### `function myEpic( action$, state$, deps ) { return newState$* }`
+#### `function myEpic( action$, state$, deps ) { return newState$ }`
 
 The **`epic`** will be called by `useEpic()`, passing the `action$`, `state$` and `deps` arguments, and it may either return a new [RxJS Observable](https://rxjs.dev/api/index/class/Observable) or `undefined`. If an observable is returned, and values emitted from that observable are set as `state`, the first element of the tuple returned from `useEpic()`.
 
@@ -177,9 +177,9 @@ const [state, dispatch] = useEpic(epic);
 
 A [RxJS Operator](https://rxjs.dev/guide/operators) for convient filtering of action\$ by `type`
 
-#### `action$.pipe( ofType( type, ...moreTypes* ) );`
+#### `action$.pipe( ofType( type, ...moreTypes? ) );`
 
-Just a convinience operator for filtering `actions` by type, from either the conventional object form `{ type: 'promote', payload: { id: 23 } }` or array form `['promote', { id: 23 }]`. The `ofType()` operator only filters, so your `type` property will still be in the emitted value for the next operator or subscription.
+Just a convinience operator for filtering `actions` by type, from either the action itself `'promote'`, the conventional object form `{ type: 'promote', payload: { id: 23 } }` or array form `['promote', { id: 23 }]`. The `ofType()` operator only filters, so your `type` property will still be in the emitted value for the next operator or subscription.
 
 **arguments**
 

@@ -271,11 +271,11 @@ describe('<EpicDepsProvider>', () => {
 });
 
 describe('ofType()', () => {
-  test('filters actions based on action.type, or if action is an array [type, payload]', () => {
+  test('filters actions based on action, action.type, or if action is an array [type, payload]', () => {
     // ARRANGE
     const subject = new Subject();
     const result = subject.pipe(
-      take(7),
+      take(9),
       ofType('someType'),
       toArray()
     );
@@ -283,6 +283,8 @@ describe('ofType()', () => {
     result.subscribe(values => (expected = values));
 
     // ACT
+    subject.next('someType');
+    subject.next('wrongType');
     subject.next({ type: 'someType', payload: 1 });
     subject.next({ type: 'wrongType', payload: 2 });
     subject.next({ type: 'someType', payload: 3 });
@@ -293,6 +295,7 @@ describe('ofType()', () => {
 
     // ASSERT
     expect(expected).toEqual([
+      'someType',
       { type: 'someType', payload: 1 },
       { type: 'someType', payload: 3 },
       ['someType', 6],
