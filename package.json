@@ -107,5 +107,10 @@
     "plugins": [
       "steal-css"
     ]
+  },
+  "release-it": {
+    "hooks": {
+      "before:init": "npm test"
+    }
   }
 }
