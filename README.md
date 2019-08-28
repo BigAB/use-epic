@@ -66,8 +66,10 @@ yarn add use-epic rxjs react
 
 See [examples](./examples) locally with `npm run examples`
 
-- [Simple Fetch Example](https://codesandbox.io/s/use-epic-simple-ajax-list-load-wtl2r?fontsize=14) **([code examples](./examples/simple-fetch/PeopleList.js))**
-- [Alarm Clock Example](https://codesandbox.io/s/snooze-timer-5x9vy?fontsize=14) **([code examples](./examples/alarm-clock/main.js))**
+- **[Simple Fetch Example ![CodeSandbox](https://img.shields.io/badge/CodeSandbox-black?logo=codesandbox)](https://codesandbox.io/embed/use-epic-simple-ajax-list-load-wtl2r)**
+**([source examples](./examples/simple-fetch/PeopleList.js))**
+- **[Alarm Clock Example ![CodeSandbox](https://img.shields.io/badge/CodeSandbox-black?logo=codesandbox)](https://codesandbox.io/s/use-epic-simple-ajax-list-load-wtl2r?fontsize=14)**
+**([source examples](./examples/alarm-clock/main.js))**
 - [Beer Search] _\*coming soon\*_
 - [Pull to Refresh] _\*coming soon\*_
 - [Working with simple-store] _\*coming soon\*_
