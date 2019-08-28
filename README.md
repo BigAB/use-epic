@@ -66,13 +66,15 @@ yarn add use-epic rxjs react
 
 See [examples](./examples) locally with `npm run examples`
 
-- **[![Simple Fetch Example - CodeSandbox](https://img.shields.io/badge/example-simple_fetch-black?logo=codesandbox&style=for-the-badge)](https://codesandbox.io/s/use-epic-simple-ajax-list-load-wtl2r?fontsize=14)**
+**[![Simple Fetch Example - CodeSandbox](https://img.shields.io/badge/example-simple_fetch-black?logo=codesandbox&style=for-the-badge)](https://codesandbox.io/s/use-epic-simple-ajax-list-load-wtl2r?fontsize=14)**
 **([source examples](./examples/simple-fetch/PeopleList.js))**
-- **[![Alarm Clock Example - CodeSandbox](https://img.shields.io/badge/example-alarm_clock-black?logo=codesandbox&style=for-the-badge)](https://codesandbox.io/s/alarm-clock-5x9vy?fontsize=14)**
+
+**[![Alarm Clock Example - CodeSandbox](https://img.shields.io/badge/example-alarm_clock-black?logo=codesandbox&style=for-the-badge)](https://codesandbox.io/s/alarm-clock-5x9vy?fontsize=14)**
 **([source examples](./examples/alarm-clock/main.js))**
-- [Beer Search] _\*coming soon\*_
-- [Pull to Refresh] _\*coming soon\*_
-- [Working with simple-store] _\*coming soon\*_
+
+[Beer Search] _\*coming soon\*_  
+[Pull to Refresh] _\*coming soon\*_  
+[Working with simple-store] _\*coming soon\*_  
 
 ## :book: API
 
@@ -133,7 +135,7 @@ const [state, dispatch] = useEpic(epic);
 - `action$` An observable of dispatched `actions`. The `actions` emitted are anything passed to the `dispatch()` callback returned from `useEpic()`. They can be anything, but by convention are often either objects with a `type`, `payload` and sometimes `meta` properties (e.g. `{ type: 'activate', payload: user }`), or an array tuple with the `type` as the first element and the payload as the second (e.g. `['activate', user]`).
 
 - `state$` An observable of the current `state`. It can be sometimes helpful to have a reference to the current state when composing streams, say if your `action.payload` is an `id` and you'd like to map that to a state entity before further processing it. Unless the observable returned from `useEpic()` has initial state, from using `startWith()` or a `BehaviorSubject`, this will emit `undefined` to start.  
-   ⚠️ Caution: When using `state$` it is possible to find yourself in an inifinte asynchrnous loop. Take care in how it is used along with the returned `newState$` observable.
+   ⚠️ Caution: When using `state$` it is possible to find yourself in an inifinte asynchronous loop. Take care in how it is used along with the returned `newState$` observable.
 
 - `deps` an object of key/value pairs provided by the `options` of `useEpic` when it is called, or from the `<EpicDepsProvider>` component.
 
