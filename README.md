@@ -67,7 +67,7 @@ yarn add use-epic rxjs react
 See [examples](./examples) locally with `npm run examples`
 
 - [Simple Fetch Example](https://codesandbox.io/s/use-epic-simple-ajax-list-load-wtl2r?fontsize=14) **([code examples](./examples/simple-fetch/PeopleList.js))**
-- [Snooze Timer] _\*coming soon\*_
+- [Alarm Clock Example](https://codesandbox.io/s/snooze-timer-5x9vy?fontsize=14) **([code examples](./examples/alarm-clock/main.js))**
 - [Beer Search] _\*coming soon\*_
 - [Pull to Refresh] _\*coming soon\*_
 - [Working with simple-store] _\*coming soon\*_
