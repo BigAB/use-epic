@@ -213,6 +213,37 @@ describe('useEpic()', () => {
   });
 });
 
+describe('dispatch()', () => {
+  test('if dispatch is provided more than one argument, the action dispatched to the action$ stream is an array of args', () => {
+    // ARRANGE
+    const epicStub = jest.fn();
+    const { result } = renderHook(() => useEpic(epicStub));
+
+    // get the observable passed to the epicStub as the first argument
+    const action$ = epicStub.mock.calls[0][0];
+
+    let expected; // to be assigned after 2nd action
+    // an observable stream that will wait for 2 actions and then
+    // assign those actions as an array to the expected variable
+    action$
+      .pipe(
+        take(2),
+        toArray()
+      )
+      .subscribe(values => (expected = values));
+
+    // ACT
+    const [, dispatch] = result.current;
+    act(() => {
+      dispatch('type', { foo: 'bar' });
+      dispatch(1, 2, 3, 4);
+    });
+
+    // ASSERT
+    expect(expected).toEqual([['type', { foo: 'bar' }], [1, 2, 3, 4]]);
+  });
+});
+
 describe('<EpicDepsProvider>', () => {
   test('Any props passed to <EpicDepsProvider> will be passed along to the epics third argument', () => {
     // ARRANGE

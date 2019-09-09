@@ -66,7 +66,12 @@ export const useEpic = (
     actionsRef.current = new Subject();
   }
   const actions$ = actionsRef.current;
-  const dispatch = useCallback(action => actions$.next(action), [actions$]);
+  const dispatch = useCallback(
+    (...args) => {
+      actions$.next(args.length > 1 ? args : args[0]);
+    },
+    [actions$]
+  );
 
   // epics are not recomputed, only the first value passed is used
   const epicRef = useRef(epic);
