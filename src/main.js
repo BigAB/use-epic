@@ -9,6 +9,7 @@ import {
 import { Subject, BehaviorSubject, EMPTY, isObservable } from 'rxjs';
 import { distinctUntilChanged, catchError, tap } from 'rxjs/operators';
 import { EpicDepsProvider, EpicDepsContext } from './provider';
+import { distinctUntilPropertyChanged } from './operators';
 
 export * from './operators';
 export { EpicDepsProvider };
@@ -22,8 +23,8 @@ export const useEpic = (
   // props
   const props$ref = useRef();
   if (!props$ref.current) {
-    props$ref.current = new BehaviorSubject(props$ref.current).pipe(
-      distinctUntilChanged()
+    props$ref.current = new BehaviorSubject(props).pipe(
+      distinctUntilPropertyChanged()
     );
   }
   const props$ = props$ref.current;

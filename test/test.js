@@ -34,7 +34,7 @@ describe('useEpic()', () => {
     expect(lastState.foo).toBe('xop');
   });
 
-  test('if the onservable returned from the epic immediatly emits state, state should be available immediatly for the component', async () => {
+  test('if the observable returned from the epic immediatly emits state, state should be available immediatly for the component', async () => {
     // ARRANGE
     const subject = new BehaviorSubject({ foo: 'pre' }); // Observable with state
 
@@ -132,52 +132,6 @@ describe('useEpic()', () => {
     expect(subject.observers.length).toBe(0);
   });
 
-  test('options.deps values passed to useEpic will be provided to the epic in an object as the third argument', async () => {
-    // ARRANGE
-    const expected = function someDep() {};
-    const epicStub = jest.fn();
-    // ACT
-    renderHook(() => useEpic(epicStub, { deps: { expected } }));
-
-    // ASSERT
-    expect(epicStub.mock.calls[0][2].expected).toBe(expected);
-  });
-
-  test('options.props values passed to use epic will emit to a special deps.props$ observable', async () => {
-    // ARRANGE
-    const initialProps = { count: 1 };
-    const epicStub = jest.fn();
-    const { rerender, waitForNextUpdate } = renderHook(
-      props => {
-        return useEpic(epicStub, { props: props.count });
-      },
-      {
-        initialProps,
-      }
-    );
-    const props$ = epicStub.mock.calls[0][2].props$;
-    let expected;
-    props$
-      .pipe(
-        take(4),
-        toArray()
-      )
-      .subscribe(values => (expected = values));
-
-    // ACT
-    await act(async () => {
-      rerender({ count: 2 });
-      await waitForNextUpdate();
-      rerender({ count: 3 });
-      // await waitForNextUpdate(); // confused why this breaks test with timeout
-      rerender({ count: 4 });
-      // await waitForNextUpdate(); // ditto
-    });
-
-    // ASSERT
-    expect(expected).toEqual([1, 2, 3, 4]);
-  });
-
   test('it should warn and do nothing if the epic returns something other than undefined or an observable', async () => {
     // ARRANGE
     const epicStub = jest.fn(() => []);
@@ -210,6 +164,129 @@ describe('useEpic()', () => {
 
     // ASSERT
     expect(result.error).toBe(theError);
+  });
+
+  describe('useEpic options argument', () => {
+    test('options.deps values passed to useEpic will be provided to the epic in an object as the third argument', async () => {
+      // ARRANGE
+      const expected = function someDep() {};
+      const epicStub = jest.fn();
+      // ACT
+      renderHook(() => useEpic(epicStub, { deps: { expected } }));
+
+      // ASSERT
+      expect(epicStub.mock.calls[0][2].expected).toBe(expected);
+    });
+
+    test('options.props - values passed to use epic will emit to a special deps.props$ observable', async () => {
+      // ARRANGE
+      const initialProps = { count: 1 };
+      const epicStub = jest.fn();
+      const { rerender, waitForNextUpdate } = renderHook(
+        props => {
+          return useEpic(epicStub, { props });
+        },
+        {
+          initialProps,
+        }
+      );
+      const props$ = epicStub.mock.calls[0][2].props$;
+      let expected;
+      props$
+        .pipe(
+          take(4),
+          toArray()
+        )
+        .subscribe(values => (expected = values));
+
+      // ACT
+      await act(async () => {
+        rerender({ count: 2 });
+        await waitForNextUpdate();
+        rerender({ count: 3 });
+        // await waitForNextUpdate(); // confused why this breaks test with timeout
+        rerender({ count: 4 });
+        // await waitForNextUpdate(); // ditto
+      });
+
+      // ASSERT
+      expect(expected).toEqual([
+        { count: 1 },
+        { count: 2 },
+        { count: 3 },
+        { count: 4 },
+      ]);
+    });
+
+    test('options.props - values passed to use epic can be arrays as well', async () => {
+      // ARRANGE
+      const initialProps = { count: 1 };
+      const epicStub = jest.fn();
+      const { rerender, waitForNextUpdate } = renderHook(
+        props => {
+          return useEpic(epicStub, { props: [props.count] });
+        },
+        {
+          initialProps,
+        }
+      );
+      const props$ = epicStub.mock.calls[0][2].props$;
+      let expected;
+      props$
+        .pipe(
+          take(4),
+          toArray()
+        )
+        .subscribe(values => (expected = values));
+
+      // ACT
+      await act(async () => {
+        rerender({ count: 2 });
+        await waitForNextUpdate();
+        rerender({ count: 3 });
+        // await waitForNextUpdate(); // confused why this breaks test with timeout
+        rerender({ count: 4 });
+        // await waitForNextUpdate(); // ditto
+      });
+
+      // ASSERT
+      expect(expected).toEqual([[1], [2], [3], [4]]);
+    });
+
+    test('options.props - values passed to use epic can be scalar values as well', async () => {
+      // ARRANGE
+      const initialProps = { count: 1 };
+      const epicStub = jest.fn();
+      const { rerender, waitForNextUpdate } = renderHook(
+        props => {
+          return useEpic(epicStub, { props: props.count });
+        },
+        {
+          initialProps,
+        }
+      );
+      const props$ = epicStub.mock.calls[0][2].props$;
+      let expected;
+      props$
+        .pipe(
+          take(4),
+          toArray()
+        )
+        .subscribe(values => (expected = values));
+
+      // ACT
+      await act(async () => {
+        rerender({ count: 2 });
+        await waitForNextUpdate();
+        rerender({ count: 3 });
+        // await waitForNextUpdate(); // confused why this breaks test with timeout
+        rerender({ count: 4 });
+        // await waitForNextUpdate(); // ditto
+      });
+
+      // ASSERT
+      expect(expected).toEqual([1, 2, 3, 4]);
+    });
   });
 });
 
