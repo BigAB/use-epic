@@ -45,10 +45,10 @@ export const useEpic = (
   const stateRef = useRef();
   if (!stateRef.current) {
     stateRef.current = new BehaviorSubject(stateRef.current).pipe(
-      tap(state => {
+      tap((state) => {
         setState(state);
       }),
-      catchError(err => {
+      catchError((err) => {
         // TODO: What should we do on error?
         throw err;
       })
