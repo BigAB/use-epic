@@ -5,7 +5,7 @@ import { filter, switchMap, map, pairwise } from 'rxjs/operators';
 export const ofType = (...keys) =>
   pipe(
     filter(
-      action =>
+      (action) =>
         keys.includes(action) ||
         keys.includes(action.type) ||
         (Array.isArray(action) && keys.includes(action[0]))
@@ -19,8 +19,8 @@ export const distinctUntilPropertyChanged = () =>
     filter(([prev, obj]) =>
       typeof obj === 'object'
         ? !(
-            Object.keys(prev).every(k => prev[k] === obj[k]) &&
-            Object.keys(obj).every(k => prev[k] === obj[k])
+            Object.keys(prev).every((k) => prev[k] === obj[k]) &&
+            Object.keys(obj).every((k) => prev[k] === obj[k])
           )
         : prev !== obj
     ),

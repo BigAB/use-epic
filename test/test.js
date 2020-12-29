@@ -59,12 +59,7 @@ describe('useEpic()', () => {
     let expected; // to be assigned after 4th action
     // an observable stream that will wait for 4 actions and then
     // assign those actions as an array to the expected variable
-    action$
-      .pipe(
-        take(4),
-        toArray()
-      )
-      .subscribe(values => (expected = values));
+    action$.pipe(take(4), toArray()).subscribe((values) => (expected = values));
 
     // ACT
     const [, dispatch] = result.current;
@@ -91,15 +86,12 @@ describe('useEpic()', () => {
     let expected; // to be assigned after 4th action
     // an observable stream that will wait for 4 actions and then
     // assign those actions as an array to the expected variable
-    const stateChanges$ = state$.pipe(
-      take(4),
-      toArray()
-    );
+    const stateChanges$ = state$.pipe(take(4), toArray());
 
     // ACT
     act(() => {
       // the behaviour starts with a stateful 1 state when subscribed
-      stateChanges$.subscribe(values => (expected = values));
+      stateChanges$.subscribe((values) => (expected = values));
 
       subject.next(2);
       subject.next(3);
@@ -162,7 +154,7 @@ describe('useEpic()', () => {
       subject.error(theError);
     });
 
-    // ASSERT
+    // // ASSERT
     expect(result.error).toBe(theError);
   });
 
@@ -183,7 +175,7 @@ describe('useEpic()', () => {
       const initialProps = { count: 1 };
       const epicStub = jest.fn();
       const { rerender, waitForNextUpdate } = renderHook(
-        props => {
+        (props) => {
           return useEpic(epicStub, { props });
         },
         {
@@ -193,11 +185,8 @@ describe('useEpic()', () => {
       const props$ = epicStub.mock.calls[0][2].props$;
       let expected;
       props$
-        .pipe(
-          take(4),
-          toArray()
-        )
-        .subscribe(values => (expected = values));
+        .pipe(take(4), toArray())
+        .subscribe((values) => (expected = values));
 
       // ACT
       await act(async () => {
@@ -223,7 +212,7 @@ describe('useEpic()', () => {
       const initialProps = { count: 1 };
       const epicStub = jest.fn();
       const { rerender, waitForNextUpdate } = renderHook(
-        props => {
+        (props) => {
           return useEpic(epicStub, { props: [props.count] });
         },
         {
@@ -233,11 +222,8 @@ describe('useEpic()', () => {
       const props$ = epicStub.mock.calls[0][2].props$;
       let expected;
       props$
-        .pipe(
-          take(4),
-          toArray()
-        )
-        .subscribe(values => (expected = values));
+        .pipe(take(4), toArray())
+        .subscribe((values) => (expected = values));
 
       // ACT
       await act(async () => {
@@ -258,7 +244,7 @@ describe('useEpic()', () => {
       const initialProps = { count: 1 };
       const epicStub = jest.fn();
       const { rerender, waitForNextUpdate } = renderHook(
-        props => {
+        (props) => {
           return useEpic(epicStub, { props: props.count });
         },
         {
@@ -268,11 +254,8 @@ describe('useEpic()', () => {
       const props$ = epicStub.mock.calls[0][2].props$;
       let expected;
       props$
-        .pipe(
-          take(4),
-          toArray()
-        )
-        .subscribe(values => (expected = values));
+        .pipe(take(4), toArray())
+        .subscribe((values) => (expected = values));
 
       // ACT
       await act(async () => {
@@ -302,12 +285,7 @@ describe('dispatch()', () => {
     let expected; // to be assigned after 2nd action
     // an observable stream that will wait for 2 actions and then
     // assign those actions as an array to the expected variable
-    action$
-      .pipe(
-        take(2),
-        toArray()
-      )
-      .subscribe(values => (expected = values));
+    action$.pipe(take(2), toArray()).subscribe((values) => (expected = values));
 
     // ACT
     const [, dispatch] = result.current;
@@ -317,7 +295,10 @@ describe('dispatch()', () => {
     });
 
     // ASSERT
-    expect(expected).toEqual([['type', { foo: 'bar' }], [1, 2, 3, 4]]);
+    expect(expected).toEqual([
+      ['type', { foo: 'bar' }],
+      [1, 2, 3, 4],
+    ]);
   });
 });
 
@@ -382,13 +363,9 @@ describe('ofType()', () => {
   test('filters actions based on action, action.type, or if action is an array [type, payload]', () => {
     // ARRANGE
     const subject = new Subject();
-    const result = subject.pipe(
-      take(9),
-      ofType('someType'),
-      toArray()
-    );
+    const result = subject.pipe(take(9), ofType('someType'), toArray());
     let expected;
-    result.subscribe(values => (expected = values));
+    result.subscribe((values) => (expected = values));
 
     // ACT
     subject.next('someType');
