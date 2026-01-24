@@ -60,7 +60,7 @@
     "react": "17.0.1",
     "react-dom": "^17.0.1",
     "react-test-renderer": "^17.0.1",
-    "release-it": "^14.2.2",
+    "release-it": "^19.2.4",
     "rollup": "^2.35.1",
     "rollup-plugin-babel": "^4.3.3",
     "rollup-plugin-commonjs": "^10.1.0",
